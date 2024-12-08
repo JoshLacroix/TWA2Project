@@ -15,6 +15,7 @@ const getConversations = async (user) => {
 
 const getMessages = async (user, conversationId) => {
   try {
+    // Gets the messages from the back-end
     const res = await fetch(BASE_URL + "api/messages/" + conversationId, {
       headers: {
         "x-access-token": user.token,
@@ -45,6 +46,7 @@ const sendMessage = async (user, message, recipientId) => {
 
 const deleteMessage = async (user, messageId) => {
   try {
+    console.log(messageId)
     const res = await fetch(BASE_URL + "api/messages/" + messageId, {
       method: "DELETE",
       headers: {

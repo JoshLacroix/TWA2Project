@@ -43,6 +43,45 @@ const sendMessage = async (req, res) => {
   }
 };
 
+const deleteMessage = async (req, res) => {
+  try {
+    const messageId = req.params.id;
+    const { userId } = req.body;
+
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    if (message.sender.toString() !== userId) {
+      return res.status(403).json({ error: "Unauthorized action" });
+    }
+
+    await Message.findByIdAndDelete(messageId);
+
+    const conversation = await Conversation.findById(message.conversation);
+
+    if (conversation) {
+      const latestMessage = await Message.findOne({
+        conversation: conversation._id,
+      })
+        .sort("-createdAt");
+
+      conversation.lastMessageAt = latestMessage
+        ? latestMessage.createdAt
+        : null;
+
+      await conversation.save();
+    }
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ error: err.message });
+  }
+};
+
 const getMessages = async (req, res) => {
   try {
     const conversationId = req.params.id;
@@ -98,6 +137,7 @@ const getConversations = async (req, res) => {
 
 module.exports = {
   sendMessage,
+  deleteMessage,
   getMessages,
   getConversations,
 };

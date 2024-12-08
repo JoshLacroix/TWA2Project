@@ -117,18 +117,18 @@ const Messages = (props) => {
   };
 
   const handleDeleteMessage = async (messageToDelete) => {
-    // Remove the message from state
     const originalMessages = [...messages];
     const updatedMessages = messages.filter(
       (message) => message !== messageToDelete
     );
     setMessages(updatedMessages);
 
+    console.log(messageToDelete)
+
     try {
-      const response = await deleteMessage(messageToDelete._id);
+      const response = await deleteMessage(user, messageToDelete._id);
       if (!response.success) throw new Error("Deletion failed");
     } catch (error) {
-      // Restore message to its original position
       setMessages(originalMessages);
       console.error("Failed to delete message:", error);
     }
