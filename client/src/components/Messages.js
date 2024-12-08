@@ -13,7 +13,7 @@ import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import { AiFillBackward, AiFillCaretLeft, AiFillMessage } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { getMessages, sendMessage } from "../api/messages";
+import { getMessages, sendMessage, deleteMessage } from "../api/messages";
 import { isLoggedIn } from "../helpers/authHelper";
 import { socket } from "../helpers/socketHelper";
 import Loading from "./Loading";
@@ -116,6 +116,24 @@ const Messages = (props) => {
     );
   };
 
+  const handleDeleteMessage = async (messageToDelete) => {
+    // Remove the message from state
+    const originalMessages = [...messages];
+    const updatedMessages = messages.filter(
+      (message) => message !== messageToDelete
+    );
+    setMessages(updatedMessages);
+
+    try {
+      const response = await deleteMessage(messageToDelete._id);
+      if (!response.success) throw new Error("Deletion failed");
+    } catch (error) {
+      // Restore message to its original position
+      setMessages(originalMessages);
+      console.error("Failed to delete message:", error);
+    }
+  };
+
   const handleReceiveMessage = (senderId, username, content) => {
     const newMessage = { direction: "to", content };
 
@@ -205,6 +223,8 @@ const Messages = (props) => {
                     conservant={props.conservant}
                     message={message}
                     key={i}
+                    currentUser={props.currentUser}
+                    onDelete={handleDeleteMessage}
                   />
                 ))}
               </Stack>
