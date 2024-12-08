@@ -1,12 +1,11 @@
-import { Avatar, Card, useTheme, IconButton } from "@mui/material";
+import { Avatar, Card, useTheme } from "@mui/material";
 import React from "react";
 import UserAvatar from "./UserAvatar";
 import HorizontalStack from "./util/HorizontalStack";
-import { MdDelete } from "react-icons/md";
 
 const Message = (props) => {
-  const { conservant, message, onDelete } = props;
-  const username = conservant.username;
+  const username = props.conservant.username;
+  const message = props.message;
   const theme = useTheme();
 
   let styles = {};
@@ -20,12 +19,6 @@ const Message = (props) => {
       justifyContent: "flex-end",
     };
   }
-
-  const handleDelete = () => {
-    if (onDelete && typeof onDelete === "function") {
-      onDelete(message.id);
-    }
-  };
 
   return (
     <HorizontalStack
@@ -46,22 +39,9 @@ const Message = (props) => {
           paddingY: "12px",
           maxWidth: "70%",
           paddingX: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
         }}
       >
         {message.content}
-        {message.direction === "from" && (
-          <IconButton
-            aria-label="delete"
-            size="small"
-            sx={{ marginLeft: 1 }}
-            onClick={handleDelete}
-          >
-            <MdDelete/>
-          </IconButton>
-        )}
       </Card>
     </HorizontalStack>
   );

@@ -43,18 +43,4 @@ const sendMessage = async (user, message, recipientId) => {
   }
 };
 
-const deleteMessage = async (user, messageId) => {
-  try {
-    const res = await fetch(BASE_URL + "api/messages/" + messageId, {
-      method: "DELETE",
-      headers: {
-        "x-access-token": user.token,
-      },
-    });
-    return await res.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export { getConversations, getMessages, sendMessage, deleteMessage };
+export { getConversations, getMessages, sendMessage };
